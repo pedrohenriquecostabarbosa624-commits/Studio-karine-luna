@@ -1,0 +1,162 @@
+:root {
+    --gold: #D4AF37;
+    --dark-gold: #aa8c2c;
+    --bg-black: #050505;
+    --card-bg: rgba(25, 25, 25, 0.95);
+}
+
+* {
+    box-sizing: border-box; /* Isso impede que qualquer campo passe dos limites da tela */
+}
+
+body {
+    background-color: var(--bg-black);
+    background-image: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+    color: #f0f0f0;
+    font-family: 'Urbanist', system-ui, sans-serif;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centraliza verticalmente na tela */
+    min-height: 100vh;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 24px;
+    padding: 35px 20px;
+    width: 100%;
+    max-width: 360px; /* Tamanho perfeito para telas de celular */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    margin: 0 auto;
+}
+
+/* Ajuste Inteligente da Logo */
+.logo-wrapper {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 30px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    background-color: #000;
+}
+
+.logo-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.form-group { 
+    margin-bottom: 25px; 
+    width: 100%;
+}
+
+label {
+    display: block;
+    font-size: 11px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+input, select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+input:focus, select:focus {
+    border-color: var(--gold);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    outline: none;
+}
+
+button {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--dark-gold) 100%);
+    color: #000;
+    border: none;
+    padding: 18px;
+    width: 100%;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    margin-top: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.2s;
+}
+
+/* REGRAS DA ABA DE PAGAMENTO */
+.pix-box {
+    border: 1px dashed var(--gold);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+    background-color: #111;
+}
+
+.pix-string {
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 11px;
+    word-break: break-all;
+    border: 1px solid #333;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.btn-whatsapp {
+    background-color: #25D366;
+    color: white;
+    padding: 14px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* ESTILO DO BOTÃO DE COPIAR PIX */
+.btn-copy {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--gold);
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 12px;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-copy:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--gold);
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Reserva - Studio Karine Luna</title>
+</head>
+<body>
+    <div class="card">
+        <div class="logo-wrapper">
+            <img src="/static/logo.jpg" alt="Logo">
+        </div>
+        
+        <form action="/pagamento" method="POST">
+            <div class="form-group">
+                <label>Seu Nome</label>
+                <input type="text" name="nome" placeholder="Seu nome completo" required>
+            </div>
+            <div class="form-group">
+                <label>Procedimento</label>
+                <select name="procedimento" required>
+                    <option value="" disabled selected>O que vamos realçar hoje?</option>
+                    {% for servico, preco in servicos.items() %}
+                        <option value="{{ servico }}">{{ servico }} (R$ {{ "%.2f"|format(preco) }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group"><label>Data</label><input type="date" name="data" required></div>
+            <div class="form-group"><label>Hora</label><input type="time" name="hora" required></div>
+            <button type="submit">Confirmar Agendamento</button>
+        </form>
+    </div>
+</body>
+</html>
