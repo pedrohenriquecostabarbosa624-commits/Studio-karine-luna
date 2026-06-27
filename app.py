@@ -83,7 +83,15 @@ def pagamento():
     qr.save(out, kind='png', scale=8)
     img_base64 = base64.b64encode(out.getvalue()).decode('utf-8')
     
-    msg = f"Olá! Agendamento: {procedimento} para {nome} no dia {data} às {hora}. Valor: R$ {valor_total:.2f}"
+    msg = f"✨ *AGENDAMENTO CONFIRMADO* ✨
+
+👤 *Cliente:* {nome}
+📅 *Data:* {data}
+⏰ *Hora:* {hora}
+💅 *Serviço:* {procedimento}
+💰 *Valor:* R$ {valor_total:.2f}
+
+Obrigado por agendar conosco!"
     link_wpp = f"https://api.whatsapp.com/send?phone={WHATSAPP_NUMERO}&text={urllib.parse.quote(msg)}"
     
     return render_template('pix.html', nome=nome, procedimento=procedimento, valor_total=f"{valor_total:.2f}", qr_code_img=img_base64, link_whatsapp=link_wpp)
