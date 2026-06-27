@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horário Indisponível - Estúdio Karine</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #ff4c4c; /* Vermelho suave para indicar erro */
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1rem;
+            color: #cccccc;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .btn-voltar {
+            display: inline-block;
+            width: 100%;
+            padding: 15px;
+            background-color: #d4af37; /* Dourado elegante */
+            color: #121212;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+        .btn-voltar:hover {
+            background-color: #bfa030;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">❌</div>
+        <h1>Horário Indisponível</h1>
+        <p>Poxa, este horário já foi reservado por outra pessoa. Por favor, volte e escolha um novo horário.</p>
+        <a href="javascript:history.back()" class="btn-voltar">Voltar para o Agendamento</a>
+    </div>
+</body>
+</html>
