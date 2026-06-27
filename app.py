@@ -10,6 +10,24 @@ WHATSAPP_NUMERO = "5568999900690"
 CHAVE_PIX = "d881c964-ee6b-45a6-8e51-2e069fb597b2"
 ARQUIVO_AGENDAMENTOS = "agendamentos.txt"
 
+def calcular_crc16(payload):
+    crc = 0xFFFF
+    for byte in payload.encode('utf-8'):
+        crc ^= (byte << 8)
+        for _ in range(8):
+            if crc & 0x8000:
+                crc = (crc << 1) ^ 0x1021
+            else:
+                crc = crc << 1
+            crc &= 0xFFFF
+    return f"{crc:04X}"
+
+def gerar_payload_pix(valor):
+    valor_formatado = f"{valor:.2f}"
+    payload = f"00020126360014BR.GOV.BCB.PIX0114{CHAVE_PIX}5204000053039865405{valor_formatado}5802BR5916Estudio Karine6008BRASILIA62070503***6304"
+    crc = calcular_crc16(payload)
+    return payload + crc
+
 SERVICOS = {
     "Brow Lamination com Tintura": 90.00,
     "Brow Lamination sem Tintura": 55.00,
@@ -52,13 +70,23 @@ def pagamento():
     if os.path.exists(ARQUIVO_AGENDAMENTOS):
         with open(ARQUIVO_AGENDAMENTOS, "r") as f:
             if horario_solicitado in f.read().splitlines():
-                return "❌ Horário já reservado! Por favor, volte e escolha outro."
+                return "❌ Horário já reservado! Volte e escolha outro."
                 
     with open(ARQUIVO_AGENDAMENTOS, "a") as f:
         f.write(horario_solicitado + "\n")
 
     valor_total = SERVICOS.get(procedimento, 0.00)
-    return "Agendamento confirmado!"
+    pix_payload = gerar_payload_pix(valor_total)
+    
+    qr = segno.make(pix_payload)
+    out = io.BytesIO()
+    qr.save(out, kind='png', scale=8)
+    img_base64 = base64.b64encode(out.getvalue()).decode('utf-8')
+    
+    msg = f"Olá! Agendamento: {procedimento} para {nome} no dia {data} às {hora}. Valor: R$ {valor_total:.2f}"
+    link_wpp = f"https://api.whatsapp.com/send?phone={WHATSAPP_NUMERO}&text={urllib.parse.quote(msg)}"
+    
+    return render_template('pix.html', nome=nome, procedimento=procedimento, valor_total=f"{valor_total:.2f}", qr_code_img=img_base64, link_whatsapp=link_wpp)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
