@@ -67,16 +67,14 @@ def pagamento():
     hora = request.form.get('hora')
     horario_solicitado = f"{data} {hora}"
     
-    # Trava de Agendamento
     if os.path.exists(ARQUIVO_AGENDAMENTOS):
         with open(ARQUIVO_AGENDAMENTOS, "r") as f:
             if horario_solicitado in f.read().splitlines():
-                return "❌ Horário já reservado! Por favor, volte e escolha outro."
+                return render_template('erro.html')
                 
     with open(ARQUIVO_AGENDAMENTOS, "a") as f:
         f.write(horario_solicitado + "\n")
 
-    # Geração do PIX e Mensagem
     valor_total = SERVICOS.get(procedimento, 0.00)
     pix_payload = gerar_payload_pix(valor_total)
     
@@ -87,7 +85,7 @@ def pagamento():
     
     msg = f"✨ *AGENDAMENTO CONFIRMADO* ✨%0A%0A👤 *Cliente:* {nome}%0A📅 *Data:* {data}%0A⏰ *Hora:* {hora}%0A💅 *Serviço:* {procedimento}%0A💰 *Valor:* R$ {valor_total:.2f}"
     
-    return render_template('pix.html', nome=nome, procedimento=procedimento, valor_total=f"{valor_total:.2f}", qr_code_img=img_base64, mensagem_wpp=msg)
+    return render_template('pix.html', nome=nome, procedimento=procedimento, valor_total=f"{valor_total:.2f}", qr_code_img=img_base64, mensagem_wpp=msg, pix_copia_cola=pix_payload)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

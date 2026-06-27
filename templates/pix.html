@@ -14,6 +14,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 20px 0;
         }
         .container {
             background-color: #1e1e1e;
@@ -24,32 +25,52 @@
             max-width: 400px;
             width: 90%;
         }
-        h1 {
-            color: #d4af37; /* Tom dourado elegante */
-            font-size: 1.6rem;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 1rem;
-            color: #cccccc;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        strong {
-            color: #ffffff;
-        }
+        h1 { color: #d4af37; font-size: 1.6rem; margin-bottom: 10px; }
+        p { font-size: 1rem; color: #cccccc; margin-bottom: 20px; line-height: 1.5; }
+        strong { color: #ffffff; }
         .qr-container {
             background: white;
             padding: 15px;
             border-radius: 12px;
             display: inline-block;
+            margin-bottom: 20px;
+        }
+        .qr-container img { max-width: 100%; height: auto; display: block; }
+        
+        /* Estilos do Pix Copia e Cola */
+        .copia-cola-container {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
             margin-bottom: 25px;
         }
-        .qr-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
+        #pixCode {
+            width: 100%;
+            padding: 10px;
+            background-color: #121212;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            text-align: center;
         }
+        .btn-copiar {
+            background-color: #d4af37;
+            color: #121212;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .btn-copiar:hover { background-color: #bfa030; }
+
         .btn-whatsapp {
             display: block;
             width: 100%;
@@ -63,9 +84,7 @@
             box-sizing: border-box;
             transition: background-color 0.3s ease;
         }
-        .btn-whatsapp:hover {
-            background-color: #128C7E;
-        }
+        .btn-whatsapp:hover { background-color: #128C7E; }
     </style>
 </head>
 <body>
@@ -76,12 +95,42 @@
         <div class="qr-container">
             <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code Pix">
         </div>
+
+        <div class="copia-cola-container">
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">Ou utilize o Pix Copia e Cola:</p>
+            <input type="text" id="pixCode" value="{{ pix_copia_cola }}" readonly>
+            <button id="btnCopiar" onclick="copiarPix()" class="btn-copiar">📋 Copiar Código Pix</button>
+        </div>
         
-        <p style="font-size: 0.9rem; margin-bottom: 15px;">Após realizar o pagamento, clique no botão abaixo para nos enviar o comprovante e confirmar seu horário.</p>
+        <p style="font-size: 0.9rem; margin-bottom: 15px;">Após realizar o pagamento, clica no botão abaixo para nos enviar o comprovante.</p>
         
         <a href="https://api.whatsapp.com/send?phone=5568999900690&text={{ mensagem_wpp }}" target="_blank" class="btn-whatsapp">
             ✅ Já paguei! Enviar comprovante
         </a>
     </div>
+
+    <script>
+        function copiarPix() {
+            var copyText = document.getElementById("pixCode");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* Para telemóveis */
+            
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                var btn = document.getElementById("btnCopiar");
+                btn.innerHTML = "✅ Copiado!";
+                btn.style.backgroundColor = "#25D366";
+                btn.style.color = "white";
+                
+                /* Volta ao normal após 3 segundos */
+                setTimeout(() => {
+                    btn.innerHTML = "📋 Copiar Código Pix";
+                    btn.style.backgroundColor = "#d4af37";
+                    btn.style.color = "#121212";
+                }, 3000);
+            }).catch(err => {
+                alert("Erro ao copiar. Por favor, seleciona o texto manualmente.");
+            });
+        }
+    </script>
 </body>
 </html>
