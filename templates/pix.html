@@ -2,133 +2,15 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resumo da Reserva - Studio Karine Luna</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body {
-            background-color: #0d0d0d;
-            color: #f5f5f5;
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .card {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 400px;
-            margin: 30px auto;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-        .pix-box {
-            border: 1px dashed #D4AF37;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-            background-color: #111;
-        }
-        .pix-string {
-            background-color: #000;
-            color: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 11px;
-            word-break: break-all;
-            border: 1px solid #222;
-            margin-top: 10px;
-            text-align: left;
-        }
-        .btn-copy {
-            background: rgba(212, 175, 55, 0.15) !important;
-            border: 2px solid #D4AF37 !important;
-            color: #D4AF37 !important;
-            padding: 14px !important;
-            width: 100% !important;
-            border-radius: 8px !important;
-            font-size: 14px !important;
-            font-weight: bold !important;
-            margin-top: 15px !important;
-            cursor: pointer !important;
-            text-transform: uppercase !important;
-            display: block !important;
-        }
-        .btn-whatsapp {
-            background-color: #25D366;
-            color: white;
-            padding: 15px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            box-sizing: border-box;
-        }
-    </style>
+    <title>Pagamento Pix</title>
 </head>
 <body>
-    <div class="card">
-        <h2 style="font-size: 24px; margin-bottom: 15px;">Resumo da Reserva</h2>
-        <p style="color: #D4AF37; font-weight: bold; margin: 5px 0;">✨ {{ procedimento }}</p>
-        <p style="color: #ccc; margin-bottom: 25px;">📅 {{ data }} às {{ hora }}</p>
-
-        <div class="pix-box">
-            <span style="font-size: 13px; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 5px;">Taxa de Agendamento</span>
-            <div style="font-size: 32px; color: #D4AF37; font-weight: bold; margin-bottom: 15px;">R$ 20.00</div>
-            
-            <p style="font-size: 13px; color: #ccc; margin-bottom: 15px;">Escaneie o QR Code abaixo para pagar:</p>
-            
-            <div style="background: #fff; padding: 10px; border-radius: 8px; display: inline-block; margin-bottom: 15px;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00020126580014br.gov.bcb.pix0136d881c964-ee6b-45a6-8e51-2e069fb597b2520400005303986540520.005802BR5911Karine%20Luna6010Rio%20Branco62070503***6304C85D" alt="QR Code" style="width: 180px; height: 180px; display: block;">
-            </div>
-
-            <p style="font-size: 13px; color: #ccc; margin-bottom: 5px;">Ou use o Pix Copia e Cola:</p>
-            <div class="pix-string" id="pixCode">00020126580014br.gov.bcb.pix0136d881c964-ee6b-45a6-8e51-2e069fb597b2520400005303986540520.005802BR5911Karine Luna6010Rio Branco62070503***6304C85D</div>
-            
-            <button type="button" class="btn-copy" onclick="copiarPix()">
-                📋 Copiar Código Pix
-            </button>
-        </div>
-
-        <p style="font-size: 12px; color: #ffb703; margin: 15px 0 5px 0;">
-            ⚠️ Após pagar, envie o comprovante diretamente para o WhatsApp!
-        </p>
-
-        <a href="{{ link_whatsapp }}" class="btn-whatsapp" target="_blank">
-            Já paguei! Enviar Comprovante 💬
-        </a>
-    </div>
-
-    <script>
-        function copiarPix() {
-            var textToCopy = document.getElementById("pixCode").innerText;
-            var tempInput = document.createElement("textarea");
-            tempInput.value = textToCopy;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            tempInput.setSelectionRange(0, 99999);
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-
-            var btn = document.querySelector(".btn-copy");
-            btn.innerHTML = "✅ Copiado!";
-            btn.style.setProperty('background', '#25D366', 'important');
-            btn.style.setProperty('color', '#fff', 'important');
-            btn.style.setProperty('border-color', '#25D366', 'important');
-
-            setTimeout(function() {
-                btn.innerHTML = "📋 Copiar Código Pix";
-                btn.style.setProperty('background', 'rgba(212, 175, 55, 0.15)', 'important');
-                btn.style.setProperty('color', '#D4AF37', 'important');
-                btn.style.setProperty('border-color', '#D4AF37', 'important');
-            }, 2000);
-        }
-    </script>
+    <h1>Pagamento via Pix</h1>
+    <p>Olá <strong>{{ nome }}</strong>, o valor do seu procedimento é R$ {{ valor_total }}.</p>
+    <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code Pix">
+    <p>Após realizar o pagamento, clique abaixo para confirmar:</p>
+    <a href="https://api.whatsapp.com/send?phone=5568999900690&text={{ mensagem_wpp }}" target="_blank" style="padding: 15px; background-color: #25D366; color: white; text-decoration: none; border-radius: 5px;">
+        ✅ Já paguei! Enviar comprovante
+    </a>
 </body>
 </html>
