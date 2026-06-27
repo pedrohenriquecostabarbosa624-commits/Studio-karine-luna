@@ -1,35 +1,51 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
-    <title>Reserva - Studio Karine Luna</title>
+    <title>Agendamento - Estúdio Karine</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { background-color: #1e1e1e; padding: 30px; border-radius: 15px; width: 100%; max-width: 450px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        h1 { color: #d4af37; text-align: center; font-size: 1.8rem; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 25px; }
+        label.campo { display: block; margin-top: 15px; color: #ccc; font-weight: bold; }
+        input[type="text"], input[type="date"], input[type="time"] { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #121212; color: white; box-sizing: border-box; font-size: 1rem; }
+        .servicos-lista { margin-top: 10px; background: #2a2a2a; padding: 15px; border-radius: 8px; max-height: 250px; overflow-y: auto; }
+        .servico-item { display: flex; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+        .servico-item:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .servico-item input[type="checkbox"] { margin-right: 15px; transform: scale(1.3); cursor: pointer; }
+        .servico-item label { cursor: pointer; color: #eee; font-size: 0.95rem; width: 100%; }
+        button { width: 100%; padding: 15px; margin-top: 25px; background-color: #d4af37; color: #121212; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #bfa030; }
+    </style>
 </head>
 <body>
-    <div class="card">
-        <div class="logo-wrapper">
-            <img src="/static/logo.jpg" alt="Logo">
-        </div>
+    <div class="container">
+        <h1>Estúdio Karine</h1>
+        <p class="subtitle">Agende seus procedimentos</p>
         
         <form action="/pagamento" method="POST">
-            <div class="form-group">
-                <label>Seu Nome</label>
-                <input type="text" name="nome" placeholder="Seu nome completo" required>
+            <label class="campo">Seu Nome:</label>
+            <input type="text" name="nome" required placeholder="Ex: Maria Silva">
+
+            <label class="campo">Data:</label>
+            <input type="date" name="data" required>
+
+            <label class="campo">Hora:</label>
+            <input type="time" name="hora" required>
+
+            <label class="campo">Escolha os procedimentos (pode marcar vários):</label>
+            <div class="servicos-lista">
+                {% for servico, preco in servicos.items() %}
+                <div class="servico-item">
+                    <input type="checkbox" name="procedimentos" value="{{ servico }}" id="srv_{{ loop.index }}">
+                    <label for="srv_{{ loop.index }}">{{ servico }} <br><span style="color: #d4af37; font-weight: bold;">R$ {{ "%.2f"|format(preco) }}</span></label>
+                </div>
+                {% endfor %}
             </div>
-            <div class="form-group">
-                <label>Procedimento</label>
-                <select name="procedimento" required>
-                    <option value="" disabled selected>O que vamos realçar hoje?</option>
-                    {% for servico, preco in servicos.items() %}
-                        <option value="{{ servico }}">{{ servico }} (R$ {{ "%.2f"|format(preco) }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group"><label>Data</label><input type="date" name="data" required></div>
-            <div class="form-group"><label>Hora</label><input type="time" name="hora" required></div>
-            <button type="submit">Confirmar Agendamento</button>
+
+            <button type="submit">Agendar e Gerar Pix</button>
         </form>
     </div>
 </body>

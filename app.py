@@ -5,7 +5,7 @@ import io
 import base64
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 WHATSAPP_NUMERO = "5568999900690"
 CHAVE_PIX = "d881c964-ee6b-45a6-8e51-2e069fb597b2"
 ARQUIVO_AGENDAMENTOS = "agendamentos.txt"
@@ -48,11 +48,9 @@ SERVICOS = {
     "Limpeza de Pele": 100.00,
     "Dermaplaning": 55.00,
     "Spa dos Lábios": 20.00,
-    "Maquiagem (Noiva/Eventos/Artística)": 120.00,
-    "Maquiagem Luxo Elaborada": 80.00,
-    "Maquiagem Express Básica": 65.00,
-    "Micropigmentação (1ª Sessão)": 370.00,
-    "Micropigmentação (1ª Sessão + Retoque)": 450.00
+    "Maquiagem (Noiva)": 120.00,
+    "Maquiagem Luxo": 80.00,
+    "Micropigmentação": 370.00
 }
 
 @app.route('/')
@@ -62,11 +60,14 @@ def home():
 @app.route('/pagamento', methods=['POST'])
 def pagamento():
     nome = request.form.get('nome')
-    procedimento = request.form.get('procedimento')
     data = request.form.get('data')
     hora = request.form.get('hora')
+    # request.form.getlist pega TODOS os itens que o cliente marcou
+    procedimentos = request.form.getlist('procedimentos') 
+    
     horario_solicitado = f"{data} {hora}"
     
+    # Trava de agendamento duplicado
     if os.path.exists(ARQUIVO_AGENDAMENTOS):
         with open(ARQUIVO_AGENDAMENTOS, "r") as f:
             if horario_solicitado in f.read().splitlines():
@@ -75,7 +76,12 @@ def pagamento():
     with open(ARQUIVO_AGENDAMENTOS, "a") as f:
         f.write(horario_solicitado + "\n")
 
-    valor_total = SERVICOS.get(procedimento, 0.00)
+    # Calcula o total somando os procedimentos escolhidos
+    valor_total = sum(SERVICOS.get(p, 0.00) for p in procedimentos)
+    
+    # Transforma a lista de procedimentos num texto separado por vírgula
+    procedimentos_str = ", ".join(procedimentos) 
+
     pix_payload = gerar_payload_pix(valor_total)
     
     qr = segno.make(pix_payload)
@@ -83,9 +89,9 @@ def pagamento():
     qr.save(out, kind='png', scale=8)
     img_base64 = base64.b64encode(out.getvalue()).decode('utf-8')
     
-    msg = f"✨ *AGENDAMENTO CONFIRMADO* ✨%0A%0A👤 *Cliente:* {nome}%0A📅 *Data:* {data}%0A⏰ *Hora:* {hora}%0A💅 *Serviço:* {procedimento}%0A💰 *Valor:* R$ {valor_total:.2f}"
+    msg = f"✨ *AGENDAMENTO CONFIRMADO* ✨%0A%0A👤 *Cliente:* {nome}%0A📅 *Data:* {data}%0A⏰ *Hora:* {hora}%0A💅 *Serviços:* {procedimentos_str}%0A💰 *Valor Total:* R$ {valor_total:.2f}"
     
-    return render_template('pix.html', nome=nome, procedimento=procedimento, valor_total=f"{valor_total:.2f}", qr_code_img=img_base64, mensagem_wpp=msg, pix_copia_cola=pix_payload)
+    return render_template('pix.html', nome=nome, valor_total=f"{valor_total:.2f}", qr_code_img=img_base64, mensagem_wpp=msg, pix_copia_cola=pix_payload)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
