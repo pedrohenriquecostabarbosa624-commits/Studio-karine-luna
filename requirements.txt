@@ -2,3 +2,4 @@ Flask
 gunicorn
 segno
 Flask-SQLAlchemy
+mercadopago

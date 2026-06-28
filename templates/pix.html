@@ -5,92 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento Pix - Estúdio Karine</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px 0;
-        }
-        .container {
-            background-color: #1e1e1e;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px 0; }
+        .container { background-color: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6); text-align: center; max-width: 400px; width: 90%; }
         h1 { color: #d4af37; font-size: 1.6rem; margin-bottom: 10px; }
         p { font-size: 1rem; color: #cccccc; margin-bottom: 20px; line-height: 1.5; }
-        strong { color: #ffffff; }
-        .qr-container {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
+        .qr-container { background: white; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 20px; }
         .qr-container img { max-width: 100%; height: auto; display: block; }
+        .copia-cola-container { background-color: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 25px; }
+        #pixCode { width: 100%; padding: 10px; background-color: #121212; color: #888; border: 1px solid #444; border-radius: 5px; box-sizing: border-box; margin-bottom: 10px; font-family: monospace; font-size: 0.8rem; text-align: center; }
+        .btn-copiar { background-color: #d4af37; color: #121212; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
         
-        /* Estilos do Pix Copia e Cola */
-        .copia-cola-container {
-            background-color: #2a2a2a;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-        }
-        #pixCode {
-            width: 100%;
-            padding: 10px;
-            background-color: #121212;
-            color: #888;
-            border: 1px solid #444;
-            border-radius: 5px;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-            font-family: monospace;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-        .btn-copiar {
-            background-color: #d4af37;
-            color: #121212;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-        .btn-copiar:hover { background-color: #bfa030; }
-
+        /* Estilo Inicial Bloqueado do Botão */
         .btn-whatsapp {
             display: block;
             width: 100%;
             padding: 15px;
-            background-color: #25D366;
-            color: white;
+            background-color: #444444;
+            color: #888888;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
             font-size: 1.1rem;
             box-sizing: border-box;
-            transition: background-color 0.3s ease;
+            pointer-events: none; /* Desativa o clique */
+            opacity: 0.6;
+            transition: all 0.5s ease;
         }
-        .btn-whatsapp:hover { background-color: #128C7E; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Pagamento via Pix</h1>
-        <p>Olá <strong>{{ nome }}</strong>,<br> o valor do seu procedimento é <strong>R$ {{ valor_total }}</strong>.</p>
+        <p>Olá <strong>{{ nome }}</strong>,<br> o valor total é <strong>R$ {{ valor_total }}</strong>.</p>
         
         <div class="qr-container">
             <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code Pix">
@@ -102,10 +48,10 @@
             <button id="btnCopiar" onclick="copiarPix()" class="btn-copiar">📋 Copiar Código Pix</button>
         </div>
         
-        <p style="font-size: 0.9rem; margin-bottom: 15px;">Após realizar o pagamento, clica no botão abaixo para nos enviar o comprovante.</p>
+        <p id="statusTexto" style="font-size: 0.9rem; margin-bottom: 15px; color: #d4af37; font-weight: bold;">⏳ Aguardando pagamento no banco...</p>
         
-        <a href="https://api.whatsapp.com/send?phone=5568999900690&text={{ mensagem_wpp }}" target="_blank" class="btn-whatsapp">
-            ✅ Já paguei! Enviar comprovante
+        <a href="https://api.whatsapp.com/send?phone=5568999900690&text={{ mensagem_wpp }}" target="_blank" class="btn-whatsapp" id="btnWpp">
+            ❌ Envio Bloqueado (Aguardando Pix)
         </a>
     </div>
 
@@ -113,24 +59,35 @@
         function copiarPix() {
             var copyText = document.getElementById("pixCode");
             copyText.select();
-            copyText.setSelectionRange(0, 99999); /* Para telemóveis */
-            
-            navigator.clipboard.writeText(copyText.value).then(() => {
-                var btn = document.getElementById("btnCopiar");
-                btn.innerHTML = "✅ Copiado!";
-                btn.style.backgroundColor = "#25D366";
-                btn.style.color = "white";
-                
-                /* Volta ao normal após 3 segundos */
-                setTimeout(() => {
-                    btn.innerHTML = "📋 Copiar Código Pix";
-                    btn.style.backgroundColor = "#d4af37";
-                    btn.style.color = "#121212";
-                }, 3000);
-            }).catch(err => {
-                alert("Erro ao copiar. Por favor, seleciona o texto manualmente.");
-            });
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            document.getElementById("btnCopiar").innerHTML = "✅ Copiado!";
         }
+
+        // Script inteligente que checa o pagamento sem parar
+        const paymentId = "{{ payment_id }}";
+        const checarPagamento = setInterval(() => {
+            fetch('/status/' + paymentId)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'approved') {
+                        clearInterval(checarPagamento); // Para de consultar o servidor
+                        
+                        // Libera o botão do WhatsApp
+                        const btn = document.getElementById('btnWpp');
+                        btn.innerHTML = "✅ Confirmar no WhatsApp";
+                        btn.style.backgroundColor = "#25D366";
+                        btn.style.color = "white";
+                        btn.style.pointerEvents = "auto";
+                        btn.style.opacity = "1";
+                        
+                        // Atualiza o texto de status
+                        document.getElementById('statusTexto').innerHTML = "🎉 Pagamento Recebido com Sucesso!";
+                        document.getElementById('statusTexto').style.color = "#25D366";
+                    }
+                })
+                .catch(err => console.error(err));
+        }, 3000); // Executa a cada 3 segundos
     </script>
 </body>
 </html>
