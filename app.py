@@ -31,8 +31,7 @@ SERVICOS = {
     "Dermaplaning": 55.00,
     "Spa dos Lábios": 20.00,
     "Maquiagem (Noiva)": 120.00,
-    "Maquiagem Luxo": 80.00,
-    "Micropigmentação": 370.00
+    "Maquiagem Luxo": 80.00
 }
 
 @app.route('/')
@@ -104,10 +103,8 @@ def pagamento():
     pix_copia_cola = transaction_data.get("qr_code")
     img_base64 = transaction_data.get("qr_code_base64")
     
-    # Mensagem atualizada separando o que foi pago do que falta
     msg = f"✨ *AGENDAMENTO CONFIRMADO* ✨%0A%0A👤 *Cliente:* {nome}%0A📅 *Data:* {data}%0A⏰ *Hora:* {hora}%0A💅 *Serviços:* {procedimentos_str}%0A💰 *Valor Total:* R$ {valor_total:.2f}%0A✅ *Sinal Pago:* R$ {taxa_agendamento:.2f}%0A💵 *Restante no Estúdio:* R$ {restante_no_estudio:.2f}"
     
-    # Exibe no ecrã o valor da taxa que está sendo cobrada
     return render_template('pix.html', nome=nome, valor_total=f"{taxa_agendamento:.2f}", qr_code_img=img_base64, mensagem_wpp=msg, pix_copia_cola=pix_copia_cola, payment_id=payment_id)
 
 @app.route('/status/<payment_id>')
